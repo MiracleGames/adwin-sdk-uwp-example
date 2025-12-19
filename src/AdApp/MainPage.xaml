@@ -1,0 +1,78 @@
+﻿<Page
+    x:Class="AdApp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AdApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Margin="10" Content="CMP" Click="{x:Bind OpenCmp}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Margin="10" Content="Banner Ad Default" Click="{x:Bind ShowBannerAdDefault}"/>
+                <Button Margin="10" Content="Banner Ad Image" Click="{x:Bind ShowBannerAdImage}"/>
+                <Button Margin="10" Content="Banner Ad Web" Click="{x:Bind ShowBannerAdWeb}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Margin="10" Content="Interstitial Ad Default" Click="{x:Bind ShowInterstitialAdDefault}"/>
+                <Button Margin="10" Content="Interstitial Ad Image" Click="{x:Bind ShowInterstitialAdImage}"/>
+                <Button Margin="10" Content="Interstitial Ad Web" Click="{x:Bind ShowInterstitialAdWeb}"/>
+                <Button Margin="10" Content="Interstitial Ad Video" Click="{x:Bind ShowInterstitialAdVideo}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Margin="10" Content="Couplet Ad Default" Click="{x:Bind ShowCoupletAdDefault}"/>
+                <Button Margin="10" Content="Couplet Ad Image" Click="{x:Bind ShowCoupletAdImage}"/>
+                <Button Margin="10" Content="Couplet Ad Web" Click="{x:Bind ShowCoupletAdWeb}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Margin="10" Content="Reward Ad Default" Click="{x:Bind ShowRewardAdDefault}"/>
+                <Button Margin="10" Content="Reward Ad Web" Click="{x:Bind ShowRewardAdWeb}"/>
+                <Button Margin="10" Content="Reward Ad Video" Click="{x:Bind ShowRewardAdVideo}"/>
+            </StackPanel>
+            <StackPanel>
+                <Button Margin="10" Content="Feed Ad" Click="{x:Bind ShowFeedAdDefault}"/>
+                <!--<StackPanel x:Name="FeedContainer" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" Width="400" Height="50" Background="LightGray"/>-->
+                <!--<ContentControl x:Name="FeedContainer" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" Width="400" Height="50" Background="LightGray"/>-->
+                <!--<UserControl x:Name="FeedContainer" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" Width="400" Height="50" Background="LightGray"/>-->
+                <ListView Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0">
+                    <ListViewItem Width="400" Height="50" Background="LightGray" Margin="0,10">
+                        <Grid>
+                            <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </ListViewItem>
+                    <ListViewItem x:Name="FeedContainer" Width="400" Height="50" Background="LightGray" Padding="0" Margin="0"/>
+                    <ListViewItem Width="400" Height="50" Background="LightGray" Margin="0,10">
+                        <Grid>
+                            <TextBlock Text="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </ListViewItem>
+                </ListView>
+            </StackPanel>
+            <StackPanel>
+                <Button Margin="10" Content="Embed Ad" Click="{x:Bind ShowEmbedAdDefault}"/>
+                <!--<StackPanel x:Name="EmbedContainer" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" Width="400" Height="400" Background="LightGray"/>-->
+                <ContentControl x:Name="EmbedContainer" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" Width="400" Height="400" Background="LightGray"/>
+                <!--<UserControl x:Name="EmbedContainer" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" Width="400" Height="400" Background="LightGray"/>-->
+                <!--<ListView Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0">
+                    <ListViewItem Width="400" Height="400" Background="LightGray" Margin="0,10">
+                        <Grid>
+                            <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </ListViewItem>
+                    <ListViewItem x:Name="EmbedContainer" Width="400" Height="400" Background="LightGray" Padding="0" Margin="0"/>
+                    <ListViewItem Width="400" Height="400" Background="LightGray" Margin="0,10">
+                        <Grid>
+                            <TextBlock Text="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </ListViewItem>
+                </ListView>
+                -->
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>
