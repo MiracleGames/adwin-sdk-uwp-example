@@ -34,7 +34,7 @@ namespace AdApp
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await ApplicationManager.OpenCmp(AppId, SecretKey);
+            ApplicationManager.OpenCmp(AppId, SecretKey);
             var result = await ApplicationManager.Initialize(AppId, SecretKey);
             if (result.ReturnValue)
             {

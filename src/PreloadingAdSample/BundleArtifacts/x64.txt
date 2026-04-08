@@ -1,0 +1,2 @@
+MainPackage=D:\MGSDK\UWPSDK\UWPSDK-ads7.0\MGADSDK-master\Samples\PreloadingAdSample\bin\x64\Debug\AdSample_1.0.9.0_x64_Debug.msix
+SymbolPackage=D:\MGSDK\UWPSDK\UWPSDK-ads7.0\MGADSDK-master\Samples\PreloadingAdSample\obj\x64\Debug\Symbols\AdSample_1.0.9.0_x64_Debug.appxsym

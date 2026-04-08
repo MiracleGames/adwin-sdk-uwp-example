@@ -1,0 +1,78 @@
+﻿<Page
+    x:Class="AdSample.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AdSample"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+  <Grid>
+    <StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <Button Margin="10" Content="Preload FullScreen Ad" Click="{x:Bind PreloadFullScreenAd}"/>
+        <Button Margin="10" Content="Show Preload FullScreen Ad" Click="{x:Bind ShowPreloadFullScreenAd}"/>
+      </StackPanel>
+
+      <StackPanel Orientation="Horizontal">
+        <Button Margin="10" Content="Preload Banner Ad" Click="{x:Bind PreloadBannerAd}"/>
+        <Button Margin="10" Content="Show Preload Banner Ad" Click="{x:Bind ShowPreloadBannerAd}"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <Button Margin="10" Content="Preload Interstitial Ad" Click="{x:Bind PreloadInterstitialAd}"/>
+        <Button Margin="10" Content="Show Preload Interstitial Ad" Click="{x:Bind ShowPreloadInterstitialAd}"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <Button Margin="10" Content="Preload Couplet Ad" Click="{x:Bind PreloadCoupletAd}"/>
+        <Button Margin="10" Content="Show Preload Couplet Ad" Click="{x:Bind ShowPreloadCoupletAd}"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <Button Margin="10" Content="Preload Reward Ad" Click="{x:Bind PreloadRewardAd}"/>
+        <Button Margin="10" Content="Show Preload Reward Ad" Click="{x:Bind ShowPreloadRewardAd}"/>
+      </StackPanel>
+      <!--<StackPanel Orientation="Horizontal">
+        <StackPanel Width="433" Height="235">
+          <Button Margin="10" Content="Preload Feed Ad" Click="{x:Bind Path=PreloadFeedAdDefault}"/>
+          <Button Margin="10" Content="Show Preload Feed Ad" Click="{x:Bind Path=ShowPreloadFeedAdDefault}"/>
+          <ListView Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0">
+            <ListViewItem Width="400" Height="50" Background="LightGray" Margin="0,10">
+              <Grid>
+                <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </Grid>
+            </ListViewItem>
+            <ListViewItem x:Name="FeedContainer" Width="400" Height="50" Background="LightGray" Padding="0" Margin="0"/>
+            <ListViewItem Width="400" Height="50" Background="LightGray" Margin="0,10">
+              <Grid>
+                <TextBlock Text="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </Grid>
+            </ListViewItem>
+          </ListView>
+        </StackPanel>
+        <StackPanel Width="575">
+          <Button Margin="10" Content="Preload Embed Ad" Click="{x:Bind Path=PreloadEmbedAdDefault}"/>
+          <Button Margin="10" Content="Show Preload Embed Ad" Click="{x:Bind Path=ShowPreloadEmbedAdDefault}"/>
+          <ContentControl x:Name="EmbedContainer" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" Width="400" Height="280" Background="LightGray"/>
+        </StackPanel>
+      </StackPanel>-->
+      <StackPanel Orientation="Horizontal">
+        <Button Margin="10" Content="show FullScreen Ad" Click="{x:Bind ShowFullScreenAd}"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <Button Margin="10" Content="show Banner Ad" Click="{x:Bind ShowBannerAd}"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <Button Margin="10" Content="show Interstitial Ad" Click="{x:Bind ShowInterstitialAd}"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <Button Margin="10" Content="show Couplet Ad" Click="{x:Bind ShowCoupletAd}"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <Button Margin="10" Content="show Reward Ad" Click="{x:Bind ShowRewardAd}"/>
+      </StackPanel>
+
+    </StackPanel>
+
+  </Grid>
+
+</Page>
