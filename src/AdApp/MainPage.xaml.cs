@@ -597,5 +597,175 @@ namespace AdApp
             {
             }
         }
+
+        #region //preload ad example
+        private void EnableShowPreloadAdBtn(string adUnitid)
+        {
+            foreach (var item in gridPreloadAd.Children)
+            {
+                if (item is Button button)
+                {
+                    if (button.Tag.ToString().Contains($"SHOW_{adUnitid}"))
+                    {
+                        button.IsEnabled = true;
+                        return;
+                    }
+                }
+            }
+        }
+
+        private async void btnPreloadAd_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Button btnPreload = (Button)sender;
+                string btnTag = btnPreload.Tag.ToString();
+
+                string adUnitId = btnTag.Split('_')[1];
+                AdType adType = (AdType)Convert.ToInt32(btnTag.Split('_')[2]);
+
+                ShowMessage($"Ad unit [{adUnitId}] [{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] Start Preloading...");
+
+                var result = await AdvertisingManager.PreloadAd(adUnitId, adType);
+                if (result.ReturnValue)
+                {
+                    EnableShowPreloadAdBtn(adUnitId);
+                    ShowMessage($"Ad unit [{adUnitId}] [{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] materials are ready.");
+                }
+                else
+                {
+                    ShowMessage($"Ad unit [{adUnitId}] [{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] Preload Failed");
+                } 
+            }
+            catch (Exception)
+            {
+                 
+            }
+        }
+
+        private async void btnShowPreloadAd_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Button btn = (Button)sender;
+                string btnTag = btn.Tag.ToString();
+                string adUnitId = btnTag.Split('_')[1];
+                AdType adType = (AdType)Convert.ToInt32(btnTag.Split('_')[2]);
+
+                var result = await AdvertisingManager.ShowPreloadAd(adUnitId, adType);
+                if (result.ReturnValue)
+                {
+                    btn.IsEnabled = false;
+                    ShowMessage($"Ad unit [{adUnitId}] [{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] Already Displayed.");
+                }
+                else
+                {
+                    ShowMessage($"Ad unit [{adUnitId}] [{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] Display Failed."); 
+                } 
+            }
+            catch (Exception)
+            { 
+            }
+        }
+
+        public async void btnShowRewardedPreloadAd_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var json = "{\"coin\":100}";
+                var result = await AdvertisingManager.ShowPreloadAd(RewardAdUnitId, AdType.Reward,
+                    new RewardAdSettingOptions
+                    {
+                        //MediaType = "video",//Supported types: web, video; Generally, developers do not need to configure this.;If no value is provided, a random selection is made based on the MG backend configuration.
+                        Comment = WebUtility.UrlEncode(json),//Developer-Defined Parameters
+                    });
+
+                if (result.ReturnValue && result.Tag is RewardAdCompleteState completeState)
+                {
+                    if (completeState.IsCompleted)
+                    {
+                        ShowMessage($"Rewarded Ad Already Displayed, UnitId = {RewardAdUnitId}，When the user watches the video in its entirety, the reward logic is triggered.");
+
+                        // When the user watches the video in its entirety, the reward logic is triggered.
+                        var comment = WebUtility.UrlDecode(completeState.Comment);
+                        // Claim Incentive Ad Rewards Through MG Services
+                        AdvertisingManager.ReportAdRewardFulfillment(completeState.RewardId);
+                    }
+                    else
+                    {
+                        ShowMessage("If a user does not watch the rewarded video, no reward will be issued.");
+                    }
+
+                    Button btn = (Button)sender;
+                    btn.IsEnabled = false;
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                } 
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private async void btnShowFeedPreloadAd_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Button btn = (Button)sender;
+                string btnTag = btn.Tag.ToString();
+                string adUnitId = btnTag.Split('_')[1];
+                AdType adType = (AdType)Convert.ToInt32(btnTag.Split('_')[2]);
+
+                var adSettingOptions = new CustomAdSettingOptions
+                {
+                    Container = FeedContainer  // Control instances created and maintained by developers
+                };
+                var result = await AdvertisingManager.ShowPreloadAd(FeedAdUnitId, AdType.Custom, adSettingOptions);
+                if (result.ReturnValue)
+                {
+                    btn.IsEnabled = false;
+                    ShowMessage($"Ad unit [{adUnitId}] [{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] Already Displayed.");
+                }
+                else
+                {
+                    ShowMessage($"Ad unit [{adUnitId}] [{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] Display Failed.");
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private async void btnShowEmbedPreloadAd_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Button btn = (Button)sender;
+                string btnTag = btn.Tag.ToString();
+                string adUnitId = btnTag.Split('_')[1];
+                AdType adType = (AdType)Convert.ToInt32(btnTag.Split('_')[2]);
+
+                var adSettingOptions = new CustomAdSettingOptions
+                {
+                    Container = EmbedContainer  // Control instances created and maintained by developers
+                };
+                var result = await AdvertisingManager.ShowPreloadAd(FeedAdUnitId, AdType.Custom, adSettingOptions);
+                if (result.ReturnValue)
+                {
+                    btn.IsEnabled = false;
+                    ShowMessage($"Ad unit [{adUnitId}] [{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] Already Displayed.");
+                }
+                else
+                {
+                    ShowMessage($"Ad unit [{adUnitId}] [{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] Display Failed.");
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+        #endregion
     }
 }

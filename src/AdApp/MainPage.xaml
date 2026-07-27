@@ -92,6 +92,44 @@
             <StackPanel Orientation="Horizontal">
                 <Button Content="Open CMP" Click="{x:Bind OpenCmp}"/>
             </StackPanel> 
+            
+            <StackPanel Margin="0,10">
+                <Border Background="DarkGray" Margin="5,0">
+                    <TextBlock Text="Ad Preload" Foreground="#FFFFFF" FontWeight="Bold" Margin="5,0"/>
+                </Border>
+                <Grid Margin="5,0" BorderBrush="DarkGray" BorderThickness="1" Name="gridPreloadAd">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Row="0" Tag="PRE_b871f83c5e8845f1b43325561bcdd6c7_1" Content="1.FullScreen Ad" Name="btnPreloadAd" Click="btnPreloadAd_Click"/>
+                    <Button Grid.Row="1" Tag="PRE_cb7d9688a2d9499992febb6b642b3625_3" Content="2.Banner Ad preload" Click="btnPreloadAd_Click"/>
+                    <Button Grid.Row="2" Tag="PRE_2cb66a1301404561881a3f26b6ce5ba7_4" Content="3.Interstitial Ad preload" Click="btnPreloadAd_Click"/>
+                    <Button Grid.Row="3" Tag="PRE_b502f6e6281c43e4b28ea22503471039_5" Content="4.Couplet Ad preload" Click="btnPreloadAd_Click"/>
+                    <Button Grid.Row="4" Tag="PRE_2ae60936ba664fbfb7d92ce3a19c2915_6" Content="5.Reward Ad preload" Click="btnPreloadAd_Click"/>
+                    <Button Grid.Row="5" Tag="PRE_f152f6caf7a8440f8510bc31534baf4e_7" Content="6.Feed Ad preload" Click="btnPreloadAd_Click"/>
+                    <Button Grid.Row="6" Tag="PRE_4192966a9db343f48dd2f6308ea9ec30_7" Content="7.Embed Ad preload" Click="btnPreloadAd_Click"/>
+
+                    <Button Grid.Row="0" Grid.Column="2" Tag="SHOW_b871f83c5e8845f1b43325561bcdd6c7_1" Content="Show ad" Click="btnShowPreloadAd_Click" IsEnabled="False" Name="btnShowPreloadAd" />
+                    <Button Grid.Row="1" Grid.Column="2" Tag="SHOW_cb7d9688a2d9499992febb6b642b3625_3" Content="Show ad" Click="btnShowPreloadAd_Click" IsEnabled="False"/>
+                    <Button Grid.Row="2" Grid.Column="2" Tag="SHOW_2cb66a1301404561881a3f26b6ce5ba7_4" Content="Show ad" Click="btnShowPreloadAd_Click" IsEnabled="False"/>
+                    <Button Grid.Row="3" Grid.Column="2" Tag="SHOW_b502f6e6281c43e4b28ea22503471039_5" Content="Show ad" Click="btnShowPreloadAd_Click" IsEnabled="False"/>
+                    <Button Grid.Row="4" Grid.Column="2" Tag="SHOW_2ae60936ba664fbfb7d92ce3a19c2915_6" Content="Show rewarded ad" Click="btnShowRewardedPreloadAd_Click" IsEnabled="False"/>
+                    <Button Grid.Row="5" Grid.Column="2" Tag="SHOW_f152f6caf7a8440f8510bc31534baf4e_7" Content="Show feed ad" Click="btnShowFeedPreloadAd_Click" IsEnabled="False"/>
+                    <Button Grid.Row="6" Grid.Column="2" Tag="SHOW_4192966a9db343f48dd2f6308ea9ec30_7" Content="Show embed ad" Click="btnShowEmbedPreloadAd_Click" IsEnabled="False"/>
+                </Grid>
+            </StackPanel>
+
         </StackPanel>
 
         <TextBox x:Name="txtMessage" Grid.Column="2" TextWrapping="Wrap" AcceptsReturn="True"/>
