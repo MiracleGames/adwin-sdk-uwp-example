@@ -53,3 +53,5 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 /src/.vs
+/src/AdApp/.vs/AdApp.csproj.dtbcache.json
+/src/PreloadingAdSample/.vs
