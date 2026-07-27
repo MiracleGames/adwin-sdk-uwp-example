@@ -20,23 +20,26 @@ namespace AdApp
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        /*
+         * 1.Downlodad the SDK  https://doc.mg-ads.com/en/docs/AdSdkService/UwpEngineSdk/SdkDownload
+         * 2.Reference the SDK  https://doc.mg-ads.com/en/docs/AdSdkService/UwpEngineSdk/VisualStudioConfig
+         */
         public MainPage()
         {
             this.InitializeComponent();
             Loaded += MainPage_Loaded;
-        }
+        } 
 
         private const string AppId = "69316b6861328938223cc124";
         private const string SecretKey = "MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgZgULOuiIDYZyGiUyYdGr3odHVN6ebZ1uDwXx7PXiHh2gCgYIKoZIzj0DAQehRANCAASf1FWCfsSn/tXFVRt04C7JkpRG12KSC3wnaJRWb5QWin9dsBk1OR31BCsELMYtWsFhA7e6Q6Fi4Mi6+ub24O5a";
-        private const string FullScreenAdUnitId = "b871f83c5e8845f1b43325561bcdd6c7";     //开屏:1920 x 1080
-        private const string ExitScreenAdUnitId = "5076eab6ae1042b6b92f73ea01981475";       //退屏:1920 x 1080
-        private const string BannerAdUnitId = "cb7d9688a2d9499992febb6b642b3625";           //横幅:728 x 90
-        private const string InterstitialAdUnitId = "2cb66a1301404561881a3f26b6ce5ba7";     //插屏:1024 x 768
-        private const string CoupletAdUnitId = "b502f6e6281c43e4b28ea22503471039";          //对联:300 x 600
-        private const string RewardAdUnitId = "2ae60936ba664fbfb7d92ce3a19c2915";           //激励广告:1024x768
-        private const string FeedAdUnitId = "f152f6caf7a8440f8510bc31534baf4e";  //信息流，由开发者维护广告控件
-        private const string EmbeddedAdUnitId = "4192966a9db343f48dd2f6308ea9ec30";         //嵌入式，由开发者维护广告控件
-
+        private const string FullScreenAdUnitId = "b871f83c5e8845f1b43325561bcdd6c7";       //Full-screen:1920 x 1080
+        private const string ExitScreenAdUnitId = "5076eab6ae1042b6b92f73ea01981475";       //Exit Ad:1920 x 1080
+        private const string BannerAdUnitId = "cb7d9688a2d9499992febb6b642b3625";           //Banner:728 x 90
+        private const string InterstitialAdUnitId = "2cb66a1301404561881a3f26b6ce5ba7";     //Interstitial:1024 x 768
+        private const string CoupletAdUnitId = "b502f6e6281c43e4b28ea22503471039";          //Couplet:300 x 600
+        private const string RewardAdUnitId = "2ae60936ba664fbfb7d92ce3a19c2915";           //Rewarded:1024x768
+        private const string FeedAdUnitId = "f152f6caf7a8440f8510bc31534baf4e";             //Feed，The control instance created by the developer
+        private const string EmbeddedAdUnitId = "4192966a9db343f48dd2f6308ea9ec30";         //Embed，The control instance created by the developer,
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
