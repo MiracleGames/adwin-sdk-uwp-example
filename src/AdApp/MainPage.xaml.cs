@@ -2,7 +2,12 @@
 using MiracleGamesAd.Models;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
+using System.Reflection;
+using System.Text;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -32,121 +37,565 @@ namespace AdApp
         private const string FeedAdUnitId = "f152f6caf7a8440f8510bc31534baf4e";  //信息流，由开发者维护广告控件
         private const string EmbeddedAdUnitId = "4192966a9db343f48dd2f6308ea9ec30";         //嵌入式，由开发者维护广告控件
 
+
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            ApplicationManager.OpenCmp(AppId, SecretKey);
-            var result = await ApplicationManager.Initialize(AppId, SecretKey);
-            if (result.ReturnValue)
+            try
             {
-                AdvertisingManager.SetupExitunitId(ExitScreenAdUnitId);
-                var ad = await AdvertisingManager.ShowAd(FullScreenAdUnitId, AdType.FullScreen);
-                if (ad.ReturnValue)
+                // ========= Step 1: Call OpenCmp (Core Interface) =========
+                PopupCmpSettingOptions popupCmpSettingOptions = new PopupCmpSettingOptions();
+
+                // false (Recommended): Popup only appears once after the user's first selection, compliant with GDPR
+                // true: Popup appears every time the app starts, suitable for testing environments
+                popupCmpSettingOptions.IgnoreExpiredCheck = false;
+
+                var cmpResult = await ApplicationManager.OpenCmp(AppId, SecretKey, popupCmpSettingOptions);
+                if (cmpResult.ReturnValue)
                 {
+                    // CMP popup displayed successfully
+                    if (cmpResult.Tag is CmpResult cmpData)
+                    {
+                        if (cmpData.Success)
+                        {
+                            // User has made a selection, result data can be retrieved if needed 
+                            ShowMessage($"This country needs CMP, CMP result={cmpData.Payload}");
+                        }
+                        // else: User did not make a selection, continue with the following process
+                    }
                 }
+                else
+                {
+                    // Failed to display CMP popup, log the error if needed and continue initialization
+                    ShowMessage($"The CMP pop-up window is not displayed for the following reasons: 1. CMP is not required in this country, and 2. The CMP pop-up does not appear on the second launch.");
+                }
+
+                // ========= Optional: Get Region CMP Requirement (Additional Interface, Used in Specific Scenarios) =========
+                // bool isRequired = ApplicationManager.UserRegionCmpRequirement;
+
+                // ========= Step 2: Call Initialize (Core Interface) =========
+                var initResult = await ApplicationManager.Initialize(AppId, SecretKey);
+                if (initResult.ReturnValue)
+                {
+                    ShowMessage($"Initialization complete:Token={ApplicationManager.AccessToken.Token}, ExpiresIn={ApplicationManager.AccessToken.ExpiresIn}");
+
+                    // Initialization successful, advertising features are available
+
+                    AdvertisingManager.SetupExitunitId(ExitScreenAdUnitId);
+                    var ad = await AdvertisingManager.ShowAd(FullScreenAdUnitId, AdType.FullScreen);
+                    if (ad.ReturnValue)
+                    {
+                    }
+                }
+                else
+                {
+                    ShowMessage("Initialization failed");
+                    // Initialization failed, troubleshoot based on the error message
+                    // Common reasons: network failure, VPN conflict, invalid AppKey/Secret, server exception
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        public async void OpenCmp()
+        {
+            try
+            {
+                bool isUserRegionCmpRequired = ApplicationManager.UserRegionCmpRequirement;
+                ShowMessage($"CMP is required in this region, value={isUserRegionCmpRequired.ToString()}");
+
+                //if (isUserRegionCmpRequired) // CMP is required for this region.
+                {
+                    PopupCmpSettingOptions popupCmpSettingOptions = new PopupCmpSettingOptions();
+                    // false (Recommended): Popup only appears once after the user's first selection, compliant with GDPR
+                    // true: Popup appears every time the app starts, suitable for testing environments
+                    popupCmpSettingOptions.IgnoreExpiredCheck = true;
+
+                    var cmpResult = await ApplicationManager.OpenCmp(AppId, SecretKey, popupCmpSettingOptions);
+                    if (cmpResult.ReturnValue)
+                    {
+                        // CMP popup displayed successfully
+                        if (cmpResult.Tag is CmpResult cmpData)
+                        {
+                            if (cmpData.Success)
+                            {
+                                // User has made a selection, result data can be retrieved if needed
+                                string userChoiceData = cmpData.Payload;
+                                ShowMessage($"This country needs CMP, CMP result={cmpData.Payload}");
+                            }
+                            // else: User did not make a selection, continue with the following process
+                        }
+                    }
+                    else
+                    {
+                        ShowMessage($"The CMP pop-up window is not displayed for the following reasons: CMP is not required in this country");
+                        // Failed to display CMP popup, log the error if needed and continue initialization
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        #region //ad example 
+        public async void ShowFullScreenDefault()
+        {
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {FullScreenAdUnitId}");
+                var result = await AdvertisingManager.ShowAd(FullScreenAdUnitId, AdType.FullScreen);
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {FullScreenAdUnitId}"); 
+                }
+                else
+                {
+                    ShowMessage("The ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        public async void ShowFullScreenImage()
+        {
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {FullScreenAdUnitId}");
+                /*MediaType supported types: web, video;
+                  Generally, developers do not need to set this.
+                  If no value is provided, a value is selected randomly based on the MG backend configuration.
+                 */
+                var result = await AdvertisingManager.ShowAd(FullScreenAdUnitId, AdType.FullScreen, new BannerAdSettingOptions { MediaType = "image" });
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {FullScreenAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("The ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        public async void ShowFullScreenWeb()
+        {
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {FullScreenAdUnitId}");
+
+                /*MediaType supported types: web, video;
+                  Generally, developers do not need to set this.
+                  If no value is provided, a value is selected randomly based on the MG backend configuration.
+                 */
+                var result = await AdvertisingManager.ShowAd(FullScreenAdUnitId, AdType.FullScreen, new BannerAdSettingOptions { MediaType = "web" });
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {FullScreenAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("The ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
             }
         }
 
 
-
-        public async void OpenCmp()
-        {
-            await ApplicationManager.OpenCmp(AppId, SecretKey);
-        }
-
         public async void ShowBannerAdDefault()
         {
-            var bannerAd = await AdvertisingManager.ShowAd(BannerAdUnitId, AdType.Banner);
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {BannerAdUnitId}");
+                var result = await AdvertisingManager.ShowAd(BannerAdUnitId, AdType.Banner);
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {BannerAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        public async void CloseBannerAd()
+        {
+            var dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                try
+                {
+                    AdvertisingManager.CloseAd(BannerAdUnitId);
+                }
+                catch (Exception)
+                {
+                }
+            });
         }
 
         public async void ShowBannerAdImage()
         {
-            var bannerAd = await AdvertisingManager.ShowAd(BannerAdUnitId, AdType.Banner, new BannerAdSettingOptions { MediaType = "image" });
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {BannerAdUnitId}");
+                var result = await AdvertisingManager.ShowAd(BannerAdUnitId, AdType.Banner, new BannerAdSettingOptions { MediaType = "image" });
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {BannerAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            } 
         }
 
         public async void ShowBannerAdWeb()
         {
-            var bannerAd = await AdvertisingManager.ShowAd(BannerAdUnitId, AdType.Banner, new BannerAdSettingOptions { MediaType = "web" });
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {BannerAdUnitId}");
+                var result = await AdvertisingManager.ShowAd(BannerAdUnitId, AdType.Banner, new BannerAdSettingOptions { MediaType = "web" });
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {BannerAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            } 
         }
+  
 
         public async void ShowInterstitialAdDefault()
         {
-            var interstitialAd = await AdvertisingManager.ShowAd(InterstitialAdUnitId, AdType.Interstitial);
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {InterstitialAdUnitId}");
+                var result = await AdvertisingManager.ShowAd(InterstitialAdUnitId, AdType.Interstitial);
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {InterstitialAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            } 
         }
         public async void ShowInterstitialAdImage()
         {
-            var interstitialAd = await AdvertisingManager.ShowAd(InterstitialAdUnitId, AdType.Interstitial, new InterstitialAdSettingOptions { MediaType = "image"});
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {InterstitialAdUnitId}");
+                var result = await AdvertisingManager.ShowAd(InterstitialAdUnitId, AdType.Interstitial, new BannerAdSettingOptions { MediaType = "image" });
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {InterstitialAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            } 
         }
         public async void ShowInterstitialAdWeb()
         {
-            var interstitialAd = await AdvertisingManager.ShowAd(InterstitialAdUnitId, AdType.Interstitial, new InterstitialAdSettingOptions { MediaType = "web"});
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {InterstitialAdUnitId}");
+                var result = await AdvertisingManager.ShowAd(InterstitialAdUnitId, AdType.Interstitial, new BannerAdSettingOptions { MediaType = "web" });
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {InterstitialAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            }
         }
-        public async void ShowInterstitialAdVideo()
-        {
-            var interstitialAd = await AdvertisingManager.ShowAd(InterstitialAdUnitId, AdType.Interstitial, new InterstitialAdSettingOptions { MediaType = "video"});
-        }
+        
 
         public async void ShowCoupletAdDefault()
         {
-            var coupletAd = await AdvertisingManager.ShowAd(CoupletAdUnitId, AdType.Couplet);
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {CoupletAdUnitId}");
+                var result = await AdvertisingManager.ShowAd(CoupletAdUnitId, AdType.Couplet);
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {CoupletAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            }
         }
         public async void ShowCoupletAdImage()
         {
-            var coupletAd = await AdvertisingManager.ShowAd(CoupletAdUnitId, AdType.Couplet, new CoupletAdSettingOptions { MediaType = "image"});
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {CoupletAdUnitId}");
+                var result = await AdvertisingManager.ShowAd(CoupletAdUnitId, AdType.Couplet, new BannerAdSettingOptions { MediaType = "image" });
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {CoupletAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            } 
         }
         public async void ShowCoupletAdWeb()
         {
-            var coupletAd = await AdvertisingManager.ShowAd(CoupletAdUnitId, AdType.Couplet, new CoupletAdSettingOptions { MediaType = "web"});
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {CoupletAdUnitId}");
+                var result = await AdvertisingManager.ShowAd(CoupletAdUnitId, AdType.Couplet, new BannerAdSettingOptions { MediaType = "web" });
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {CoupletAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            } 
         }
+
 
 
         public async void ShowRewardAdDefault()
         {
-            var json = "{\"coin\":100}";
-            var rewardAd = await AdvertisingManager.ShowAd(RewardAdUnitId,
-                AdType.Reward,
-                new RewardAdSettingOptions
-                {
-                    MediaType = "video",//设置广告类型图片="image",网页="web",视频="video"
-                    Comment = WebUtility.UrlEncode(json),//开发者自定义参数
-                });
-            if (rewardAd.Tag is RewardAdCompleteState completeState)
+            try
             {
-                if (completeState.IsCompleted)
+                ShowMessage($"Loading ad, UnitId = {RewardAdUnitId}");
+
+                var json = "{\"coin\":100}";
+                var result = await AdvertisingManager.ShowAd(RewardAdUnitId, AdType.Reward,
+                    new RewardAdSettingOptions
+                    {
+                        //MediaType = "video",//Supported types: web, video; Generally, developers do not need to configure this.;If no value is provided, a random selection is made based on the MG backend configuration.
+                        Comment = WebUtility.UrlEncode(json),//Developer-Defined Parameters
+                    });
+
+                if (result.ReturnValue && result.Tag is RewardAdCompleteState completeState)
                 {
-                    //游戏逻辑发奖，然后报告核销
-                    var comment = WebUtility.UrlDecode(completeState.Comment);
-             
+                    if (completeState.IsCompleted)
+                    {
+                        ShowMessage($"Ad display completed, UnitId = {RewardAdUnitId}，When the user watches the video in its entirety, the reward logic is triggered.");
+
+                        // When the user watches the video in its entirety, the reward logic is triggered.
+                        var comment = WebUtility.UrlDecode(completeState.Comment);
+                        // Claim Incentive Ad Rewards Through MG Services
+                        AdvertisingManager.ReportAdRewardFulfillment(completeState.RewardId);
+                    }
+                    else
+                    {
+                        ShowMessage("If a user does not watch the entire video, no reward will be issued.");
+                    }
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
                 }
             }
-
+            catch (Exception)
+            {
+            }
         }
 
         public async void ShowRewardAdWeb()
         {
-            var rewardAd = await AdvertisingManager.ShowAd(RewardAdUnitId, AdType.Reward, new RewardAdSettingOptions {  MediaType = "web"} );
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {RewardAdUnitId}");
+
+                var json = "{\"coin\":100}";
+                var result = await AdvertisingManager.ShowAd(RewardAdUnitId, AdType.Reward,
+                    new RewardAdSettingOptions
+                    {
+                        MediaType = "web",
+                        Comment = WebUtility.UrlEncode(json),//Developer-Defined Parameters
+                    });
+
+                if (result.ReturnValue && result.Tag is RewardAdCompleteState completeState)
+                { 
+                    if (completeState.IsCompleted)
+                    {
+                        ShowMessage($"Ad display completed, UnitId = {RewardAdUnitId}，When the user watches the video in its entirety, the reward logic is triggered.");
+
+                        // When the user watches the video in its entirety, the reward logic is triggered.
+                        var comment = WebUtility.UrlDecode(completeState.Comment);
+                        // Claim Incentive Ad Rewards Through MG Services
+                        AdvertisingManager.ReportAdRewardFulfillment(completeState.RewardId);
+                    }
+                    else
+                    {
+                        ShowMessage("If a user does not watch the entire video, no reward will be issued."); 
+                    }
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            } 
         }
 
         public async void ShowRewardAdVideo()
         {
-            var rewardAd = await AdvertisingManager.ShowAd(RewardAdUnitId, AdType.Reward, new RewardAdSettingOptions {  MediaType = "video"} );
+            try
+            {
+                ShowMessage($"Loading ad, UnitId = {RewardAdUnitId}");
+
+                var json = "{\"coin\":100}";
+                var result = await AdvertisingManager.ShowAd(RewardAdUnitId, AdType.Reward,
+                    new RewardAdSettingOptions
+                    {
+                        MediaType = "video",
+                        Comment = WebUtility.UrlEncode(json),//Developer-Defined Parameters
+                    });
+
+                if (result.ReturnValue && result.Tag is RewardAdCompleteState completeState)
+                {
+                    if (completeState.IsCompleted)
+                    {
+                        ShowMessage($"Ad display completed, UnitId = {RewardAdUnitId}，When the user watches the video in its entirety, the reward logic is triggered.");
+
+                        // When the user watches the video in its entirety, the reward logic is triggered.
+                        var comment = WebUtility.UrlDecode(completeState.Comment);
+                        // Claim Incentive Ad Rewards Through MG Services
+                        AdvertisingManager.ReportAdRewardFulfillment(completeState.RewardId);
+                    }
+                    else
+                    {
+                        ShowMessage("If a user does not watch the entire video, no reward will be issued.");
+                    }
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            } 
         }
+
+         
 
         public async void ShowFeedAdDefault()
         {
-            var feedAdSettingOptions = new FeedAdSettingOptions
+            try
             {
-                Container = FeedContainer
-            };
-            var feed = await AdvertisingManager.ShowAd(FeedAdUnitId, AdType.Feed, feedAdSettingOptions);
+                ShowMessage($"Loading ad, UnitId = {FeedAdUnitId}");
+
+                var adSettingOptions = new CustomAdSettingOptions
+                {
+                    Container = FeedContainer  // 开发者创建并维护的控件实例
+                };
+                var result = await AdvertisingManager.ShowAd(FeedAdUnitId, AdType.Custom, adSettingOptions);
+
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {FeedAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                } 
+            }
+            catch (Exception)
+            { 
+            } 
         }
 
         public async void ShowEmbedAdDefault()
         {
-            var embedAdSettingOptions = new EmbedAdSettingOptions
+            try
             {
-                Container = EmbedContainer
-            };
-            var embed = await AdvertisingManager.ShowAd(EmbeddedAdUnitId, AdType.Embeded, embedAdSettingOptions);
+                ShowMessage($"Loading ad, UnitId = {EmbeddedAdUnitId}");
+
+                var adSettingOptions = new CustomAdSettingOptions
+                {
+                    Container = EmbedContainer  // 开发者创建并维护的控件实例
+                };
+                var result = await AdvertisingManager.ShowAd(EmbeddedAdUnitId, AdType.Custom, adSettingOptions);
+
+                if (result.ReturnValue)
+                {
+                    ShowMessage($"Ad display completed, UnitId = {EmbeddedAdUnitId}");
+                }
+                else
+                {
+                    ShowMessage("This ad is not displaying. Please check whether the settings in the MG backend are correct.");
+                }
+            }
+            catch (Exception)
+            {
+            } 
+        }
+        #endregion
+
+
+        private async void ShowMessage(string msg)
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder(txtMessage.Text);
+                sb.AppendLine(msg);
+
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    txtMessage.Text = sb.ToString();
+                });
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }
